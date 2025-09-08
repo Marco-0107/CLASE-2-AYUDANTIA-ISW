@@ -1,0 +1,46 @@
+{
+  "name": "rally-backend",
+  "version": "1.0.0",
+  "description": "Este es un backend funcional para hacer pruebas y explicar de mejor manera a los alumnos de la asignatura de ISW 2025-2 los Endpoint y funcionamiento general del Backend dentro de un proyecto real.",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "lint": "eslint src/",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "rally",
+    "nodejs",
+    "express",
+    "postgresql",
+    "crud",
+    "api"
+  ],
+  "author": "Marco Cerda",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "typeorm": "^0.3.17",
+    "pg": "^8.11.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "joi": "^17.11.0",
+    "passport": "^0.6.0",
+    "passport-jwt": "^4.0.1",
+    "cookie-parser": "^1.4.6",
+    "express-session": "^1.17.3",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "eslint": "^8.52.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
