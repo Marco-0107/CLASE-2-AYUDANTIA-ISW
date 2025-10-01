@@ -35,6 +35,11 @@ const Piloto = new EntitySchema({
       nullable: false,
       unique: true,
     },
+    licencia: {
+      type: "varchar",
+      length: 12,   
+      nullable: false,
+    },
     fecha_registro: {
       type: "timestamp",
       nullable: false,
@@ -46,6 +51,11 @@ const Piloto = new EntitySchema({
       name: "IDX_PILOTO_RUT",
       columns: ["rut"],
       unique: true,
+    },
+    {
+      name: "IDX_PILOTO_LICENCIA",
+      columns: ["licencia"],
+      unique: true, 
     },
   ],
 });
