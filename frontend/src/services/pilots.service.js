@@ -1,23 +1,16 @@
-import apiClient from './api.js';
+import axios from './root.service.js';
 
 /**
- * Obtener todos los pilotos
+ * Obtiene todos los pilotos
  * @returns {Promise} Lista de pilotos
  */
 export const getPilotos = async () => {
   try {
-    const response = await apiClient.get('/pilotos');
-    return {
-      success: true,
-      data: response.data.data || response.data,
-      message: response.data.message
-    };
+    const response = await axios.get('/user');
+    return response.data;
   } catch (error) {
-    return {
-      success: false,
-      message: error.response?.data?.message || 'Error al obtener pilotos',
-      data: []
-    };
+    console.error('Error al obtener pilotos:', error);
+    throw error;
   }
 };
 

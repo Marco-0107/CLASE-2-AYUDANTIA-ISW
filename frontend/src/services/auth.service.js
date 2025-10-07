@@ -1,4 +1,4 @@
-import apiClient from './api.js';
+import axios from './root.service.js';
 
 /**
  * Servicio para login de usuario
@@ -7,7 +7,7 @@ import apiClient from './api.js';
  */
 export const login = async (credentials) => {
   try {
-    const response = await apiClient.post('/auth/login', credentials);
+    const response = await axios.post('/auth/login', credentials);
     return {
       success: true,
       data: response.data.data,
@@ -28,7 +28,7 @@ export const login = async (credentials) => {
  */
 export const register = async (userData) => {
   try {
-    const response = await apiClient.post('/auth/register', userData);
+    const response = await axios.post('/auth/register', userData);
     return {
       success: true,
       data: response.data.data,
@@ -48,7 +48,7 @@ export const register = async (userData) => {
  */
 export const logout = async () => {
   try {
-    await apiClient.post('/auth/logout');
+    await axios.post('/auth/logout');
     return { success: true };
   } catch (error) {
     return { 
