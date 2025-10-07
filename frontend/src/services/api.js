@@ -1,7 +1,15 @@
 import axios from 'axios';
 
-// Configuración base de axios
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+// Configuración base de axios - COMPLETAMENTE dinámico desde .env
+const API_URL = import.meta.env.VITE_API_URL;
+
+if (!API_URL) {
+  console.error('❌ VITE_API_URL no está definido en el archivo .env');
+  console.error('Por favor agrega: VITE_API_URL=https://tu-backend.com/api');
+  throw new Error('URL del backend no configurada');
+}
+
+console.log('✅ API URL configurada:', API_URL);
 
 const apiClient = axios.create({
   baseURL: API_URL,
