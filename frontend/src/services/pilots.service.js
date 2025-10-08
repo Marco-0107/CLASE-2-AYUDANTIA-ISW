@@ -6,11 +6,19 @@ import axios from './root.service.js';
  */
 export const getPilotos = async () => {
   try {
-    const response = await axios.get('/user');
-    return response.data;
+    const response = await axios.get('/pilotos');
+    return {
+      success: true,
+      data: response.data.data,
+      message: response.data.message
+    };
   } catch (error) {
     console.error('Error al obtener pilotos:', error);
-    throw error;
+    return {
+      success: false,
+      message: error.response?.data?.message || 'Error al obtener pilotos',
+      data: []
+    };
   }
 };
 
@@ -21,7 +29,7 @@ export const getPilotos = async () => {
  */
 export const getPiloto = async (id) => {
   try {
-    const response = await apiClient.get(`/pilotos?id_piloto=${id}`);
+    const response = await axios.get(`/pilotos/detail/?id=${id}`);
     return {
       success: true,
       data: response.data.data,
@@ -42,7 +50,7 @@ export const getPiloto = async (id) => {
  */
 export const createPiloto = async (pilotoData) => {
   try {
-    const response = await apiClient.post('/pilotos', pilotoData);
+    const response = await axios.post('/pilotos', pilotoData);
     return {
       success: true,
       data: response.data.data,
@@ -64,7 +72,7 @@ export const createPiloto = async (pilotoData) => {
  */
 export const updatePiloto = async (id, pilotoData) => {
   try {
-    const response = await apiClient.put(`/pilotos?id_piloto=${id}`, pilotoData);
+    const response = await axios.patch(`/pilotos/detail/?id=${id}`, pilotoData);
     return {
       success: true,
       data: response.data.data,
@@ -85,7 +93,7 @@ export const updatePiloto = async (id, pilotoData) => {
  */
 export const deletePiloto = async (id) => {
   try {
-    const response = await apiClient.delete(`/pilotos?id_piloto=${id}`);
+    const response = await axios.delete(`/pilotos/detail/?id=${id}`);
     return {
       success: true,
       message: response.data.message

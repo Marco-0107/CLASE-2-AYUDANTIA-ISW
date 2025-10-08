@@ -13,14 +13,17 @@ import { passportJwtSetup } from "./auth/passport.auth.js";
 
 async function setupServer() {
   try {
-    const app = express();
-
-    app.disable("x-powered-by");
+    const app = express();    app.disable("x-powered-by");
 
     app.use(cors({ 
       credentials: true, 
       origin: true 
     }));
+
+    app.use((req, res, next) => {
+      res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+      next();
+    });
     
     app.use(urlencoded({ extended: true, limit: "1mb" }));
     app.use(json({ limit: "1mb" }));
@@ -72,8 +75,12 @@ async function setupServer() {
 async function setupAPI() {
   try {
     console.log("Iniciando servidor de Rally...");
-    await connectDB();
-    await createUsers();
+    try {
+      await connectDB();
+      await createUsers();
+    } catch (dbError) {
+      console.warn("⚠️  Base de datos no disponible. Continuando sin BD...");
+    }
     await setupServer();
   } catch (error) {
     console.log("Error en setupAPI():", error);

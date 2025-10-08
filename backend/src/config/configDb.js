@@ -1,13 +1,13 @@
 "use strict";
 import { DataSource } from "typeorm";
-import { DATABASE, DB_USERNAME, HOST, PASSWORD } from "./configEnv.js";
+import { DATABASE, DB_USERNAME, HOST, DB_PASSWORD } from "./configEnv.js";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
   host: `${HOST}`,
   port: 5432,
   username: `${DB_USERNAME}`,
-  password: `${PASSWORD}`,
+  password: `${DB_PASSWORD}`,
   database: `${DATABASE}`,
   entities: ["src/entity/**/*.js"],
   synchronize: true,
@@ -20,6 +20,6 @@ export async function connectDB() {
     console.log("=> Conexión exitosa a la base de datos PostgreSQL!");
   } catch (error) {
     console.error("Error al conectar con la base de datos:", error);
-    process.exit(1);
+    throw error;
   }
 }
