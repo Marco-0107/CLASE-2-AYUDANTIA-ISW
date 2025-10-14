@@ -61,7 +61,22 @@ body {
   background-color: #545b62;
 }
 
-/* Formularios */
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .form-group {
   margin-bottom: 20px;
 }

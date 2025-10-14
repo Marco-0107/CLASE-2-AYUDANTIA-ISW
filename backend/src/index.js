@@ -13,7 +13,9 @@ import { passportJwtSetup } from "./auth/passport.auth.js";
 
 async function setupServer() {
   try {
-    const app = express();    app.disable("x-powered-by");
+    const app = express();
+
+    app.disable("x-powered-by");
 
     app.use(cors({ 
       credentials: true, 

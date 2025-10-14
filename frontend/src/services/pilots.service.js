@@ -72,7 +72,7 @@ export const createPiloto = async (pilotoData) => {
  */
 export const updatePiloto = async (id, pilotoData) => {
   try {
-    const response = await axios.patch(`/pilotos/detail/?id=${id}`, pilotoData);
+    const response = await axios.patch(`/pilotos/detail/?id_piloto=${id}`, pilotoData);
     return {
       success: true,
       data: response.data.data,
@@ -93,7 +93,7 @@ export const updatePiloto = async (id, pilotoData) => {
  */
 export const deletePiloto = async (id) => {
   try {
-    const response = await axios.delete(`/pilotos/detail/?id=${id}`);
+    const response = await axios.delete(`/pilotos/detail/?id_piloto=${id}`);
     return {
       success: true,
       message: response.data.message

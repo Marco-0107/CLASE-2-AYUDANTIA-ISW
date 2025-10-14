@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '@context/AuthContext';
-import { getPilotos } from '@services/pilots.service';
+import { getPilotos, updatePiloto, deletePiloto } from '@services/pilots.service';
 
 export default function Pilotos() {
   const { user } = useAuth();
@@ -8,6 +8,15 @@ export default function Pilotos() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [editingPiloto, setEditingPiloto] = useState(null);
+  const [formData, setFormData] = useState({
+    nombre: '',
+    apellido: '',
+    edad: '',
+    nacionalidad: '',
+    rut: '',
+    licencia: ''
+  });
 
   const handleGetPilotos = async () => {
     setLoading(true);
@@ -41,6 +50,93 @@ export default function Pilotos() {
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  const handleEdit = (piloto) => {
+    setEditingPiloto(piloto);
+    setFormData({
+      nombre: piloto.nombre,
+      apellido: piloto.apellido,
+      edad: piloto.edad,
+      nacionalidad: piloto.nacionalidad,
+      rut: piloto.rut,
+      licencia: piloto.licencia || ''
+    });
+    setError('');
+    setSuccess('');
+  };
+
+  const handleCancelEdit = () => {
+    setEditingPiloto(null);
+    setFormData({
+      nombre: '',
+      apellido: '',
+      edad: '',
+      nacionalidad: '',
+      rut: '',
+      licencia: ''
+    });
+    setError('');
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const result = await updatePiloto(editingPiloto.id_piloto, formData);
+      
+      if (result.success) {
+        setSuccess('Piloto actualizado exitosamente');
+        setPilotos(pilotos.map(p => 
+          p.id_piloto === editingPiloto.id_piloto ? { ...p, ...formData } : p
+        ));
+        handleCancelEdit();
+      } else {
+        setError(result.message);
+      }
+    } catch (err) {
+      setError('Error inesperado al actualizar piloto');
+      console.error('Update error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('¿Estás seguro de que deseas eliminar este piloto?')) {
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const result = await deletePiloto(id);
+      
+      if (result.success) {
+        setSuccess('Piloto eliminado exitosamente');
+        setPilotos(pilotos.filter(p => p.id_piloto !== id));
+      } else {
+        setError(result.message);
+      }
+    } catch (err) {
+      setError('Error inesperado al eliminar piloto');
+      console.error('Delete error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -89,6 +185,91 @@ export default function Pilotos() {
         </div>
       )}
 
+      {editingPiloto && (
+        <div className="card">
+          <h2 style={{ marginBottom: '20px', color: '#333' }}>
+            Editar Piloto: {editingPiloto.nombre} {editingPiloto.apellido}
+          </h2>
+          <form onSubmit={handleUpdate}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+              <div className="form-group">
+                <label className="form-label">Nombre</label>
+                <input
+                  type="text"
+                  name="nombre"
+                  value={formData.nombre}
+                  onChange={handleInputChange}
+                  className="form-control"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Apellido</label>
+                <input
+                  type="text"
+                  name="apellido"
+                  value={formData.apellido}
+                  onChange={handleInputChange}
+                  className="form-control"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Edad</label>
+                <input
+                  type="number"
+                  name="edad"
+                  value={formData.edad}
+                  onChange={handleInputChange}
+                  className="form-control"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Nacionalidad</label>
+                <input
+                  type="text"
+                  name="nacionalidad"
+                  value={formData.nacionalidad}
+                  onChange={handleInputChange}
+                  className="form-control"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">RUT</label>
+                <input
+                  type="text"
+                  name="rut"
+                  value={formData.rut}
+                  onChange={handleInputChange}
+                  className="form-control"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Licencia</label>
+                <input
+                  type="text"
+                  name="licencia"
+                  value={formData.licencia}
+                  onChange={handleInputChange}
+                  className="form-control"
+                />
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+              <button type="submit" className="btn btn-success" disabled={loading}>
+                {loading ? 'Guardando...' : 'Guardar Cambios'}
+              </button>
+              <button type="button" className="btn btn-secondary" onClick={handleCancelEdit} disabled={loading}>
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
       {/* Lista de pilotos */}
       {pilotos.length > 0 && (
         <div className="card">
@@ -131,6 +312,25 @@ export default function Pilotos() {
                     <strong>Registrado:</strong> {formatFecha(piloto.fecha_registro)}
                   </div>
                 )}
+
+                <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
+                  <button 
+                    onClick={() => handleEdit(piloto)} 
+                    className="btn btn-primary"
+                    style={{ flex: 1, padding: '10px' }}
+                    disabled={loading}
+                  >
+                    Editar
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(piloto.id_piloto)} 
+                    className="btn btn-danger"
+                    style={{ flex: 1, padding: '10px' }}
+                    disabled={loading}
+                  >
+                    Eliminar
+                  </button>
+                </div>
               </div>
             ))}
           </div>
