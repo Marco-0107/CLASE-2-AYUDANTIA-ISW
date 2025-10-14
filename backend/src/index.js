@@ -27,6 +27,17 @@ async function setupServer() {
       next();
     });
     
+    // Middleware para desactivar caché
+    app.use((req, res, next) => {
+      res.set({
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+        'ETag': false
+      });
+      next();
+    });
+    
     app.use(urlencoded({ extended: true, limit: "1mb" }));
     app.use(json({ limit: "1mb" }));
     app.use(cookieParser());

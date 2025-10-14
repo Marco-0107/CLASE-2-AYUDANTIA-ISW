@@ -22,10 +22,13 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0',
-    port: 1399
+    port: 1399,
+    strictPort: true
   },
   preview: {
     host: '0.0.0.0',
-    port: 1399
+    port: 1399,
+    strictPort: true,
+    cors: true
   }
 });
