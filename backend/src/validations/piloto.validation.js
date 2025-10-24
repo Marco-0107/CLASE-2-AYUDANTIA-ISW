@@ -68,8 +68,7 @@ export const pilotoBodyValidation = Joi.object({
       "string.max": "La nacionalidad debe tener máximo 50 caracteres",
       "string.pattern.base": "La nacionalidad solo puede contener letras y espacios",
       "any.required": "La nacionalidad es obligatoria"
-    }),
-  rut: Joi.string()
+    }),  rut: Joi.string()
     .min(8)
     .max(15)
     .pattern(/^[0-9]+[-|‐]{1}[0-9kK]{1}$/)
@@ -80,6 +79,15 @@ export const pilotoBodyValidation = Joi.object({
       "string.max": "El RUT debe tener máximo 15 caracteres",
       "string.pattern.base": "El RUT debe tener un formato válido (ej: 12345678-9)",
       "any.required": "El RUT es obligatorio"
+    }),
+  licencia: Joi.string()
+    .min(2)
+    .max(50)
+    .optional()
+    .allow(null, '')
+    .messages({
+      "string.min": "La licencia debe tener al menos 2 caracteres",
+      "string.max": "La licencia debe tener máximo 50 caracteres"
     })
 }).options({ 
     allowUnknown: false,

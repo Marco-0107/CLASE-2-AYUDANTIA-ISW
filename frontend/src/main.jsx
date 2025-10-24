@@ -3,6 +3,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from '@pages/Login';
 import Register from '@pages/Register';
 import Pilotos from '@pages/Pilotos';
+import GenerarQR from '@pages/GenerarQR';
+import EscanearQR from '@pages/EscanearQR';
 import Root from '@pages/Root';
 import App from '@pages/App';
 import '@styles/index.css';
@@ -14,8 +16,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <Root />,
-        children: [
+        element: <Root />,        children: [
           {
             path: '/',
             element: <Pilotos />
@@ -23,6 +24,14 @@ const router = createBrowserRouter([
           {
             path: '/pilotos',
             element: <Pilotos />
+          },
+          {
+            path: '/generar-qr',
+            element: <GenerarQR />
+          },
+          {
+            path: '/escanear-qr',
+            element: <EscanearQR />
           }
         ]
       },

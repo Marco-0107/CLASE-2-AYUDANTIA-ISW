@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@context/AuthContext';
-import { LogOut, User, Home } from 'lucide-react';
+import { LogOut, User, Home, QrCode, Scan } from 'lucide-react';
 
 export default function Header() {
   const navigate = useNavigate();
@@ -30,11 +30,20 @@ export default function Header() {
           Sistema Rally
         </h1>
       </div>
-      
-      <nav className="nav">
+        <nav className="nav">
         <Link to="/pilotos" className="nav-link">
           <Home size={18} style={{ marginRight: '8px' }} />
           Pilotos
+        </Link>
+        
+        <Link to="/generar-qr" className="nav-link">
+          <QrCode size={18} style={{ marginRight: '8px' }} />
+          Generar QR
+        </Link>
+        
+        <Link to="/escanear-qr" className="nav-link">
+          <Scan size={18} style={{ marginRight: '8px' }} />
+          Escanear QR
         </Link>
         
         <div style={{ 
