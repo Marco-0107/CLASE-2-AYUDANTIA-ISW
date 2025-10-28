@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@context/AuthContext';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Html5QrcodeScanner, Html5Qrcode } from 'html5-qrcode';
 import { createPiloto } from '@services/pilots.service';
 
 export default function EscanearQR() {
@@ -11,8 +11,10 @@ export default function EscanearQR() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const [scanMode, setScanMode] = useState('camera'); // 'camera' o 'file'
   const qrScannerRef = useRef(null);
   const hasInitialized = useRef(false);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     return () => {
@@ -51,9 +53,7 @@ export default function EscanearQR() {
           setScanning(false);
           hasInitialized.current = false;
           return;
-        }
-
-        // Configurar el scanner
+        }        // Configurar el scanner con soporte para archivos
         const scanner = new Html5QrcodeScanner(
           'qr-reader',
           {
@@ -61,6 +61,14 @@ export default function EscanearQR() {
             qrbox: { width: 250, height: 250 },
             showTorchButtonIfSupported: true,
             showZoomSliderIfSupported: true,
+            // Habilitar soporte para cargar archivos
+            supportedScanTypes: [
+              window.Html5QrcodeScanType?.SCAN_TYPE_CAMERA,
+              window.Html5QrcodeScanType?.SCAN_TYPE_FILE
+            ].filter(Boolean),
+            formatsToSupport: [
+              window.Html5QrcodeSupportedFormats?.QR_CODE
+            ].filter(Boolean)
           },
           false
         );
@@ -112,7 +120,6 @@ export default function EscanearQR() {
       }
     }, 100);
   };
-
   const detenerEscaneo = () => {
     if (qrScannerRef.current) {
       qrScannerRef.current.clear().catch(console.error);
@@ -120,6 +127,68 @@ export default function EscanearQR() {
     }
     setScanning(false);
     hasInitialized.current = false;
+  };
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setError('');
+    setSuccess('');
+    setPilotoData(null);
+    setResultado('');
+    setLoading(true);
+
+    try {
+      // Crear una instancia de Html5Qrcode para escanear archivos
+      const html5QrCode = new Html5Qrcode('qr-file-reader');
+      
+      // Escanear el archivo
+      const decodedText = await html5QrCode.scanFile(file, true);
+      
+      console.log('QR desde archivo escaneado:', decodedText);
+      setResultado(decodedText);
+      
+      try {
+        // Intentar parsear los datos del QR
+        const data = JSON.parse(decodedText);
+        
+        // Validar que tenga la estructura correcta
+        if (data.nombre && data.apellido && data.rut) {
+          setPilotoData(data);
+          setError('');
+        } else {
+          setError('El código QR no contiene datos válidos de piloto');
+        }
+      } catch (err) {
+        console.error('Error parsing QR:', err);
+        setError('Error al leer el código QR. Asegúrate de escanear un QR generado por el sistema');
+      }
+      
+      // Limpiar
+      await html5QrCode.clear();
+      
+    } catch (err) {
+      console.error('Error al escanear archivo:', err);
+      
+      let errorMessage = 'Error al leer el archivo QR';
+      
+      if (err.message?.includes('NotFoundException')) {
+        errorMessage = 'No se pudo detectar un código QR válido en la imagen. Asegúrate de que la imagen contenga un código QR claro y bien enfocado.';
+      } else if (err.message?.includes('ChecksumException')) {
+        errorMessage = 'El código QR está dañado o es ilegible. Intenta con otra imagen.';
+      } else if (err.message) {
+        errorMessage = `Error: ${err.message}`;
+      }
+      
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+      // Limpiar el input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
   };
   const handleCrearPiloto = async () => {
     if (!pilotoData) return;
@@ -183,14 +252,51 @@ export default function EscanearQR() {
         <div className="alert alert-success">
           <strong>Éxito:</strong> {success}
         </div>
-      )}
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+      )}      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
         {/* Scanner */}
         <div className="card">
-          <h2 style={{ marginBottom: '20px', color: '#333' }}>Cámara</h2>
+          <h2 style={{ marginBottom: '20px', color: '#333' }}>Cámara / Archivo</h2>
 
+          {/* Selector de modo */}
           {!scanning && !pilotoData && (
+            <div style={{ marginBottom: '20px' }}>
+              <div style={{ 
+                display: 'flex', 
+                gap: '10px',
+                backgroundColor: '#f8f9fa',
+                padding: '5px',
+                borderRadius: '8px'
+              }}>
+                <button
+                  onClick={() => setScanMode('camera')}
+                  className="btn"
+                  style={{
+                    flex: 1,
+                    backgroundColor: scanMode === 'camera' ? '#007bff' : 'transparent',
+                    color: scanMode === 'camera' ? 'white' : '#666',
+                    border: 'none'
+                  }}
+                >
+                  📷 Cámara
+                </button>
+                <button
+                  onClick={() => setScanMode('file')}
+                  className="btn"
+                  style={{
+                    flex: 1,
+                    backgroundColor: scanMode === 'file' ? '#007bff' : 'transparent',
+                    color: scanMode === 'file' ? 'white' : '#666',
+                    border: 'none'
+                  }}
+                >
+                  📁 Archivo
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Modo Cámara */}
+          {scanMode === 'camera' && !scanning && !pilotoData && (
             <div style={{ textAlign: 'center' }}>
               <div style={{ 
                 padding: '60px 20px',
@@ -206,15 +312,73 @@ export default function EscanearQR() {
                 <p style={{ color: '#aaa', fontSize: '14px' }}>
                   Asegúrate de permitir el acceso a la cámara cuando el navegador lo solicite
                 </p>
-              </div>
-
-              <button 
+              </div>              <button 
                 onClick={iniciarEscaneo}
                 className="btn btn-primary"
                 style={{ width: '100%', fontSize: '18px', padding: '15px' }}
               >
                 Iniciar Escaneo
               </button>
+            </div>
+          )}
+
+          {/* Modo Archivo */}
+          {scanMode === 'file' && !pilotoData && (
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ 
+                padding: '60px 20px',
+                backgroundColor: '#f8f9fa',
+                borderRadius: '8px',
+                border: '2px dashed #dee2e6',
+                marginBottom: '20px'
+              }}>
+                <div style={{ fontSize: '48px', marginBottom: '20px' }}>📁</div>
+                <p style={{ color: '#888', fontSize: '16px', marginBottom: '10px' }}>
+                  Selecciona una imagen con el código QR
+                </p>
+                <p style={{ color: '#aaa', fontSize: '14px' }}>
+                  Formatos soportados: PNG, JPG, JPEG
+                </p>
+              </div>
+
+              {/* Input oculto para seleccionar archivo */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileUpload}
+                style={{ display: 'none' }}
+                id="qr-file-input"
+              />
+              
+              {/* Contenedor oculto para el lector de archivos */}
+              <div id="qr-file-reader" style={{ display: 'none' }}></div>
+
+              <button 
+                onClick={() => fileInputRef.current?.click()}
+                className="btn btn-primary"
+                disabled={loading}
+                style={{ width: '100%', fontSize: '18px', padding: '15px' }}
+              >
+                {loading ? (
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div className="spinner" style={{ width: '20px', height: '20px', marginRight: '10px' }}></div>
+                    Leyendo QR...
+                  </span>
+                ) : (
+                  'Seleccionar Imagen'
+                )}
+              </button>
+
+              <div style={{ 
+                marginTop: '20px',
+                padding: '15px',
+                backgroundColor: '#fff3cd',
+                borderRadius: '8px',
+                fontSize: '14px'
+              }}>
+                <strong>💡 Consejo:</strong> Asegúrate de que la imagen sea clara y el QR esté bien enfocado
+              </div>
             </div>
           )}
 
@@ -412,21 +576,29 @@ export default function EscanearQR() {
             </div>
           )}
         </div>
-      </div>
-
-      {/* Información */}
+      </div>      {/* Información */}
       <div className="card" style={{ backgroundColor: '#f8f9fa', border: '2px dashed #dee2e6' }}>
         <h3 style={{ color: '#666', marginBottom: '15px' }}>
           ℹ️ Instrucciones
         </h3>
         <ul style={{ color: '#666', lineHeight: '1.8' }}>
-          <li>Haz clic en "Iniciar Escaneo" para activar la cámara</li>
-          <li>Permite el acceso a la cámara cuando el navegador lo solicite</li>
-          <li>Apunta la cámara al código QR generado desde la sección "Generar QR"</li>
+          <li><strong>Modo Cámara:</strong> Haz clic en "Iniciar Escaneo" para activar la cámara y escanear códigos QR en tiempo real</li>
+          <li><strong>Modo Archivo:</strong> Haz clic en "Seleccionar Imagen" para cargar una imagen con el código QR desde tu dispositivo</li>
+          <li>Permite el acceso a la cámara cuando el navegador lo solicite (solo para modo cámara)</li>
           <li>Los datos se mostrarán automáticamente al detectar el código</li>
           <li>Verifica los datos y haz clic en "Crear Piloto" para agregarlo a la base de datos</li>
           <li>Puedes escanear múltiples códigos QR sin necesidad de recargar la página</li>
         </ul>
+        
+        <div style={{ 
+          marginTop: '15px',
+          padding: '10px',
+          backgroundColor: '#e7f3ff',
+          borderRadius: '6px',
+          fontSize: '14px'
+        }}>
+          <strong>📌 Nota:</strong> El modo archivo es útil si no tienes cámara o si alguien te envió una captura del código QR
+        </div>
       </div>
     </div>
   );
