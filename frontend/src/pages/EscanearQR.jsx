@@ -53,22 +53,14 @@ export default function EscanearQR() {
           setScanning(false);
           hasInitialized.current = false;
           return;
-        }        // Configurar el scanner con soporte para archivos
+        }        // Configurar el scanner solo para cámara (simple y funcional)
         const scanner = new Html5QrcodeScanner(
           'qr-reader',
           {
             fps: 10,
             qrbox: { width: 250, height: 250 },
             showTorchButtonIfSupported: true,
-            showZoomSliderIfSupported: true,
-            // Habilitar soporte para cargar archivos
-            supportedScanTypes: [
-              window.Html5QrcodeScanType?.SCAN_TYPE_CAMERA,
-              window.Html5QrcodeScanType?.SCAN_TYPE_FILE
-            ].filter(Boolean),
-            formatsToSupport: [
-              window.Html5QrcodeSupportedFormats?.QR_CODE
-            ].filter(Boolean)
+            showZoomSliderIfSupported: true
           },
           false
         );
