@@ -40,6 +40,16 @@ const Piloto = new EntitySchema({
       length: 12,   
       nullable: false,
     },
+    foto_url: {
+      type: "varchar",
+      length: 255,
+      nullable: true
+    },
+    doc_url: {
+      type: "varchar",
+      length: 255,
+      nullable: true
+    },
     fecha_registro: {
       type: "timestamp",
       nullable: false,

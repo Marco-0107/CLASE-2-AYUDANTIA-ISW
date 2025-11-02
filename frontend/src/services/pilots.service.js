@@ -65,6 +65,27 @@ export const createPiloto = async (pilotoData) => {
 };
 
 /**
+ * Crear piloto con archivos (foto y/o PDF)
+ */
+export const createPilotoWithFiles = async (formData) => {
+  try {
+    // Evitar que axios use Content-Type por defecto (multipart need boundary)
+    const config = { headers: { 'Content-Type': 'multipart/form-data' } };
+    const response = await axios.post('/pilotos', formData, config);
+    return {
+      success: true,
+      data: response.data.data,
+      message: response.data.message
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: error.response?.data?.message || 'Error al crear piloto'
+    };
+  }
+};
+
+/**
  * Actualizar un piloto
  * @param {number} id - ID del piloto
  * @param {Object} pilotoData - Datos actualizados
@@ -73,6 +94,26 @@ export const createPiloto = async (pilotoData) => {
 export const updatePiloto = async (id, pilotoData) => {
   try {
     const response = await axios.patch(`/pilotos/detail/?id_piloto=${id}`, pilotoData);
+    return {
+      success: true,
+      data: response.data.data,
+      message: response.data.message
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: error.response?.data?.message || 'Error al actualizar piloto'
+    };
+  }
+};
+
+/**
+ * Actualizar piloto con archivos
+ */
+export const updatePilotoWithFiles = async (id, formData) => {
+  try {
+    const config = { headers: { 'Content-Type': 'multipart/form-data' } };
+    const response = await axios.patch(`/pilotos/detail/?id_piloto=${id}`, formData, config);
     return {
       success: true,
       data: response.data.data,

@@ -6,6 +6,9 @@ import indexRoutes from "./routes/index.routes.js";
 import session from "express-session";
 import passport from "passport";
 import express, { json, urlencoded } from "express";
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from 'url';
 import { cookieKey, HOST, PORT } from "./config/configEnv.js";
 import { connectDB } from "./config/configDb.js";
 import { createUsers } from "./config/initialSetup.js";
@@ -22,19 +25,28 @@ async function setupServer() {
       origin: true 
     }));
 
+    // Servir archivos estáticos subidos ANTES de middlewares de caché
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+    const uploadsPath = path.resolve(__dirname, '../../uploads');
+    try {
+      if (!fs.existsSync(uploadsPath)) fs.mkdirSync(uploadsPath, { recursive: true });
+      console.log('=> Carpeta uploads (static):', uploadsPath);
+    } catch (err) {
+      console.error('No se pudo crear uploads dir:', err);
+    }
+    app.use('/uploads', express.static(uploadsPath));
+
+    // Middleware para desactivar caché (excepto /uploads)
     app.use((req, res, next) => {
-      res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
-      next();
-    });
-    
-    // Middleware para desactivar caché
-    app.use((req, res, next) => {
-      res.set({
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0',
-        'ETag': false
-      });
+      if (!req.path.startsWith('/uploads')) {
+        res.set({
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+          'ETag': false
+        });
+      }
       next();
     });
     

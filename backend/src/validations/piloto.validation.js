@@ -10,6 +10,7 @@ export const pilotoQueryValidation = Joi.object({
       "number.integer": "El ID debe ser un número entero",
       "number.positive": "El ID debe ser positivo"
     }),
+  
   rut: Joi.string()
     .min(8)
     .max(15)
@@ -68,7 +69,8 @@ export const pilotoBodyValidation = Joi.object({
       "string.max": "La nacionalidad debe tener máximo 50 caracteres",
       "string.pattern.base": "La nacionalidad solo puede contener letras y espacios",
       "any.required": "La nacionalidad es obligatoria"
-    }),  rut: Joi.string()
+    }),
+  rut: Joi.string()
     .min(8)
     .max(15)
     .pattern(/^[0-9]+[-|‐]{1}[0-9kK]{1}$/)
@@ -88,7 +90,9 @@ export const pilotoBodyValidation = Joi.object({
     .messages({
       "string.min": "La licencia debe tener al menos 2 caracteres",
       "string.max": "La licencia debe tener máximo 50 caracteres"
-    })
+    }),
+  foto_url: Joi.string().uri().optional().messages({ 'string.uri': 'foto_url debe ser una URL válida' }),
+  doc_url: Joi.string().uri().optional().messages({ 'string.uri': 'doc_url debe ser una URL válida' })
 }).options({ 
     allowUnknown: false,
     stripUnknown: true,

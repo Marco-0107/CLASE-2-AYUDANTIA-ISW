@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '@context/AuthContext';
-import { getPilotos, updatePiloto, deletePiloto } from '@services/pilots.service';
+import { getPilotos, updatePiloto, updatePilotoWithFiles, deletePiloto } from '@services/pilots.service';
 
 export default function Pilotos() {
   const { user } = useAuth();
@@ -16,6 +16,10 @@ export default function Pilotos() {
     nacionalidad: '',
     rut: '',
     licencia: ''
+  });
+  const [fileData, setFileData] = useState({
+    foto: null,
+    doc: null
   });
 
   const handleGetPilotos = async () => {
@@ -62,6 +66,7 @@ export default function Pilotos() {
       rut: piloto.rut,
       licencia: piloto.licencia || ''
     });
+    setFileData({ foto: null, doc: null });
     setError('');
     setSuccess('');
   };
@@ -87,6 +92,11 @@ export default function Pilotos() {
     }));
   };
 
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    setFileData(prev => ({ ...prev, [name]: files && files[0] ? files[0] : null }));
+  };
+
   const handleUpdate = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -94,16 +104,37 @@ export default function Pilotos() {
     setSuccess('');
 
     try {
-      const result = await updatePiloto(editingPiloto.id_piloto, formData);
-      
-      if (result.success) {
-        setSuccess('Piloto actualizado exitosamente');
-        setPilotos(pilotos.map(p => 
-          p.id_piloto === editingPiloto.id_piloto ? { ...p, ...formData } : p
-        ));
-        handleCancelEdit();
+      const useFiles = fileData.foto || fileData.doc;
+      if (useFiles) {
+        const fd = new FormData();
+        fd.append('nombre', formData.nombre);
+        fd.append('apellido', formData.apellido);
+        fd.append('edad', formData.edad);
+        fd.append('nacionalidad', formData.nacionalidad);
+        fd.append('rut', formData.rut);
+        fd.append('licencia', formData.licencia);
+        if (fileData.foto) fd.append('foto', fileData.foto);
+        if (fileData.doc) fd.append('doc', fileData.doc);
+
+        const result = await updatePilotoWithFiles(editingPiloto.id_piloto, fd);
+        if (result.success) {
+          setSuccess('Piloto actualizado exitosamente');
+          setPilotos(pilotos.map(p => p.id_piloto === editingPiloto.id_piloto ? result.data : p));
+          handleCancelEdit();
+        } else {
+          setError(result.message);
+        }
       } else {
-        setError(result.message);
+        const result = await updatePiloto(editingPiloto.id_piloto, formData);
+        if (result.success) {
+          setSuccess('Piloto actualizado exitosamente');
+          setPilotos(pilotos.map(p => 
+            p.id_piloto === editingPiloto.id_piloto ? { ...p, ...formData } : p
+          ));
+          handleCancelEdit();
+        } else {
+          setError(result.message);
+        }
       }
     } catch (err) {
       setError('Error inesperado al actualizar piloto');
@@ -257,6 +288,28 @@ export default function Pilotos() {
                   className="form-control"
                 />
               </div>
+              <div className="form-group">
+                <label className="form-label">Foto del Piloto (JPG/PNG)</label>
+                <input
+                  type="file"
+                  name="foto"
+                  accept="image/jpeg,image/png,image/jpg"
+                  onChange={handleFileChange}
+                  className="form-control"
+                />
+                {fileData.foto && <p style={{marginTop:'5px',color:'#28a745'}}>Archivo seleccionado: {fileData.foto.name}</p>}
+              </div>
+              <div className="form-group">
+                <label className="form-label">Documentación (PDF)</label>
+                <input
+                  type="file"
+                  name="doc"
+                  accept="application/pdf"
+                  onChange={handleFileChange}
+                  className="form-control"
+                />
+                {fileData.doc && <p style={{marginTop:'5px',color:'#28a745'}}>Archivo seleccionado: {fileData.doc.name}</p>}
+              </div>
             </div>
             <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
               <button type="submit" className="btn btn-success" disabled={loading}>
@@ -310,6 +363,24 @@ export default function Pilotos() {
                 {piloto.fecha_registro && (
                   <div className="pilot-info" style={{ fontSize: '14px', color: '#888', marginTop: '10px' }}>
                     <strong>Registrado:</strong> {formatFecha(piloto.fecha_registro)}
+                  </div>
+                )}
+
+                {piloto.foto_url && (
+                  <div className="pilot-info" style={{ marginTop: '10px' }}>
+                    <strong>Foto:</strong>
+                    <div style={{ marginTop: '5px' }}>
+                      <img src={piloto.foto_url} alt="Foto del piloto" style={{ maxWidth: '100%', borderRadius: '8px', maxHeight: '200px', objectFit: 'cover' }} />
+                    </div>
+                  </div>
+                )}
+
+                {piloto.doc_url && (
+                  <div className="pilot-info" style={{ marginTop: '10px' }}>
+                    <strong>Documentación:</strong>
+                    <a href={piloto.doc_url} target="_blank" rel="noopener noreferrer" style={{ marginLeft: '5px', color: '#007bff', textDecoration: 'underline' }}>
+                      Ver PDF
+                    </a>
                   </div>
                 )}
 

@@ -60,6 +60,20 @@ export async function createPiloto(req, res) {
   try {
     const { body } = req;
 
+    // Si vienen archivos, agregarlos al body con sus URLs
+    const files = req.files || {};
+    if (files.foto && files.foto[0]) {
+      const foto = files.foto[0];
+      body.foto_url = `${req.protocol}://${req.get('host')}/uploads/${foto.filename}`;
+    }
+    if (files.doc && files.doc[0]) {
+      const doc = files.doc[0];
+      body.doc_url = `${req.protocol}://${req.get('host')}/uploads/${doc.filename}`;
+    }
+
+    // Convertir tipos si vienen como strings
+    if (body.edad) body.edad = parseInt(body.edad, 10);
+
     const { error } = pilotoBodyValidation.validate(body);
     if (error) {
       return handleErrorClient(res, 400, "Datos de entrada inválidos", error.message);
@@ -81,6 +95,19 @@ export async function createPiloto(req, res) {
 export async function updatePiloto(req, res) {
   try {
     const { query, body } = req;
+
+    // Manejar archivos si vienen
+    const files = req.files || {};
+    if (files.foto && files.foto[0]) {
+      const foto = files.foto[0];
+      body.foto_url = `${req.protocol}://${req.get('host')}/uploads/${foto.filename}`;
+    }
+    if (files.doc && files.doc[0]) {
+      const doc = files.doc[0];
+      body.doc_url = `${req.protocol}://${req.get('host')}/uploads/${doc.filename}`;
+    }
+
+    if (body.edad) body.edad = parseInt(body.edad, 10);
 
     const { error: queryError } = pilotoQueryValidation.validate(query);
     if (queryError) {
