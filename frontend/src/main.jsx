@@ -5,6 +5,8 @@ import Register from '@pages/Register';
 import Pilotos from '@pages/Pilotos';
 import GenerarQR from '@pages/GenerarQR';
 import EscanearQR from '@pages/EscanearQR';
+import Chat from '@pages/Chat';
+import ChatPiloto from '@pages/ChatPiloto';
 import Root from '@pages/Root';
 import App from '@pages/App';
 import '@styles/index.css';
@@ -28,10 +30,16 @@ const router = createBrowserRouter([
           {
             path: '/generar-qr',
             element: <GenerarQR />
-          },
-          {
+          },          {
             path: '/escanear-qr',
             element: <EscanearQR />
+          },          {
+            path: '/chat',
+            element: <Chat />
+          },
+          {
+            path: '/chat-piloto',
+            element: <ChatPiloto />
           }
         ]
       },

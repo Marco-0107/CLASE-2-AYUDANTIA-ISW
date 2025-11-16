@@ -21,15 +21,24 @@ export default function Login() {
     // Limpiar error al escribir
     if (error) setError('');
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
+    // Detectar si es RUT (login de piloto)
+    const esRUT = /^\d{1,2}\.?\d{3}\.?\d{3}-[\dkK]$/.test(formData.email);
+
     // Validaciones básicas
-    if (!formData.email || !formData.password) {
-      setError('Por favor completa todos los campos');
+    if (!formData.email) {
+      setError('Por favor ingresa tu email o RUT');
+      setLoading(false);
+      return;
+    }
+
+    // Si no es RUT, requerir contraseña
+    if (!esRUT && !formData.password) {
+      setError('Por favor ingresa tu contraseña');
       setLoading(false);
       return;
     }
@@ -65,37 +74,40 @@ export default function Login() {
           <div className="alert alert-error">
             {error}
           </div>
-        )}
-
-        <form onSubmit={handleSubmit}>
+        )}        <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label className="form-label" htmlFor="email">
-              Email
+              Email o RUT
             </label>
             <input
-              type="email"
+              type="text"
               id="email"
               name="email"
               className="form-control"
+              placeholder="correo@ejemplo.com o 12345678-9"
               value={formData.email}
               onChange={handleChange}
-              placeholder="admin@rally.com"
               disabled={loading}
             />
-          </div>
-
-          <div className="form-group">
+            <small style={{ color: '#888', fontSize: '12px', marginTop: '5px', display: 'block' }}>
+              Usuarios: ingresa tu email | Pilotos: ingresa tu RUT
+            </small>
+          </div>          <div className="form-group">
             <label className="form-label" htmlFor="password">
-              Contraseña
+              Contraseña {formData.email && /^\d{1,2}\.?\d{3}\.?\d{3}-[\dkK]$/.test(formData.email) && (
+                <span style={{ color: '#888', fontSize: '12px', fontWeight: 'normal' }}>
+                  (opcional para pilotos)
+                </span>
+              )}
             </label>
             <input
               type="password"
               id="password"
               name="password"
               className="form-control"
+              placeholder="Tu contraseña"
               value={formData.password}
               onChange={handleChange}
-              placeholder="Tu contraseña"
               disabled={loading}
             />
           </div>
