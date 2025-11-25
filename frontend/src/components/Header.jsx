@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@context/AuthContext';
-import { LogOut, User, Home, QrCode, Scan, MessageCircle } from 'lucide-react';
+import { LogOut, User, Home, QrCode, Scan, MessageCircle, Calendar } from 'lucide-react';
 
 export default function Header() {
   const navigate = useNavigate();
@@ -44,7 +44,13 @@ export default function Header() {
           <Scan size={18} style={{ marginRight: '8px' }} />
           Escanear QR
         </Link>
-          {user?.rol === 'admin' && (
+        
+        <Link to="/eventos" className="nav-link">
+          <Calendar size={18} style={{ marginRight: '8px' }} />
+          Eventos
+        </Link>
+          
+        {user?.rol === 'admin' && (
           <Link to="/chat" className="nav-link">
             <MessageCircle size={18} style={{ marginRight: '8px' }} />
             Chat con Pilotos

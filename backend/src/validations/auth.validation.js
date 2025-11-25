@@ -22,17 +22,15 @@ export const authValidation = Joi.object({
       "any.invalid": "Debe ingresar un email válido o un RUT en formato 12345678-9",
     }),
   password: Joi.string()
-    .min(6)
+    .min(3)
     .max(50)
-    .pattern(/^[a-zA-Z0-9]+$/)
     .allow('')
     .optional()
     .messages({
       "string.empty": "La contraseña no puede estar vacía.",
       "string.base": "La contraseña debe ser de tipo texto.",
-      "string.min": "La contraseña debe tener al menos 6 caracteres.",
+      "string.min": "La contraseña debe tener al menos 3 caracteres.",
       "string.max": "La contraseña debe tener como máximo 50 caracteres.",
-      "string.pattern.base": "La contraseña solo puede contener letras y números.",
     }),
 }).unknown(false).messages({
   "object.unknown": "No se permiten propiedades adicionales.",
@@ -74,17 +72,15 @@ export const registerValidation = Joi.object({
       "string.email": "El email debe tener un formato válido.",
     }),
   password: Joi.string()
-    .min(6)
+    .min(3)
     .max(50)
-    .pattern(/^[a-zA-Z0-9]+$/)
     .required()
     .messages({
       "string.empty": "La contraseña no puede estar vacía.",
       "any.required": "La contraseña es obligatoria.",
       "string.base": "La contraseña debe ser de tipo texto.",
-      "string.min": "La contraseña debe tener al menos 6 caracteres.",
+      "string.min": "La contraseña debe tener al menos 3 caracteres.",
       "string.max": "La contraseña debe tener como máximo 50 caracteres.",
-      "string.pattern.base": "La contraseña solo puede contener letras y números.",
     }),
 })
   .unknown(false)

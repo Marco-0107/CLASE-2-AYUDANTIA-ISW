@@ -7,6 +7,7 @@ import GenerarQR from '@pages/GenerarQR';
 import EscanearQR from '@pages/EscanearQR';
 import Chat from '@pages/Chat';
 import ChatPiloto from '@pages/ChatPiloto';
+import Eventos from '@pages/Eventos';
 import Root from '@pages/Root';
 import App from '@pages/App';
 import '@styles/index.css';
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
           {
             path: '/chat-piloto',
             element: <ChatPiloto />
+          },
+          {
+            path: '/eventos',
+            element: <Eventos />
           }
         ]
       },

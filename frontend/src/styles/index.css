@@ -18,6 +18,466 @@ body {
   padding: 20px;
 }
 
+/* Estilos para página de Eventos */
+.eventos-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #c94b21 100%);
+  padding: 40px 20px;
+}
+
+.eventos-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.eventos-icon-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #ff6600, #dc143c);
+  border-radius: 50%;
+  box-shadow: 0 10px 30px rgba(255, 102, 0, 0.5);
+  margin-bottom: 20px;
+}
+
+.eventos-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  background: linear-gradient(to right, #ff9966, #ff5e62);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 15px;
+}
+
+.eventos-subtitle {
+  color: #cbd5e0;
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+}
+
+.eventos-btn-create {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(to right, #ff6600, #dc143c);
+  color: white;
+  font-weight: bold;
+  padding: 15px 35px;
+  border: none;
+  border-radius: 50px;
+  box-shadow: 0 10px 25px rgba(255, 102, 0, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 16px;
+}
+
+.eventos-btn-create:hover {
+  transform: scale(1.05);
+  box-shadow: 0 15px 35px rgba(255, 102, 0, 0.6);
+}
+
+.eventos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 30px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.evento-card {
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+  border: 1px solid #4a5568;
+}
+
+.evento-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(255, 102, 0, 0.3);
+  border-color: #ff6600;
+}
+
+.evento-card-header {
+  background: linear-gradient(to right, #ff6600, #dc143c);
+  padding: 25px;
+  position: relative;
+  overflow: hidden;
+}
+
+.evento-card-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 150px;
+  height: 150px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.evento-card-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+  z-index: 1;
+}
+
+.evento-card-body {
+  padding: 25px;
+}
+
+.evento-info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: #cbd5e0;
+  margin-bottom: 15px;
+  font-size: 0.95rem;
+}
+
+.evento-info-icon {
+  color: #ff6600;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.evento-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #4a5568;
+}
+
+.evento-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.evento-btn-edit {
+  background: #3182ce;
+  color: white;
+  box-shadow: 0 4px 12px rgba(49, 130, 206, 0.4);
+}
+
+.evento-btn-edit:hover {
+  background: #2c5aa0;
+  box-shadow: 0 6px 16px rgba(49, 130, 206, 0.6);
+}
+
+.evento-btn-delete {
+  background: #e53e3e;
+  color: white;
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4);
+}
+
+.evento-btn-delete:hover {
+  background: #c53030;
+  box-shadow: 0 6px 16px rgba(229, 62, 62, 0.6);
+}
+
+.eventos-empty {
+  text-align: center;
+  padding: 80px 20px;
+  background: rgba(45, 55, 72, 0.5);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid #4a5568;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.eventos-empty-icon {
+  width: 96px;
+  height: 96px;
+  color: #4a5568;
+  margin: 0 auto 25px;
+}
+
+.eventos-empty-title {
+  color: #a0aec0;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.eventos-empty-subtitle {
+  color: #718096;
+  font-size: 1.1rem;
+}
+
+.eventos-loading {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.eventos-spinner {
+  display: inline-block;
+  width: 64px;
+  height: 64px;
+  border: 4px solid rgba(255, 102, 0, 0.2);
+  border-top-color: #ff6600;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.eventos-loading-text {
+  margin-top: 25px;
+  color: #cbd5e0;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+/* Modal de Eventos */
+.eventos-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+.eventos-modal {
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  border-radius: 20px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+  max-width: 700px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 1px solid #4a5568;
+}
+
+.eventos-modal-header {
+  position: sticky;
+  top: 0;
+  background: linear-gradient(to right, #ff6600, #dc143c);
+  padding: 25px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 10;
+  border-radius: 20px 20px 0 0;
+}
+
+.eventos-modal-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.eventos-modal-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: white;
+  margin: 0;
+}
+
+.eventos-modal-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.eventos-modal-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.eventos-modal-body {
+  padding: 35px;
+}
+
+.eventos-form-group {
+  margin-bottom: 25px;
+}
+
+.eventos-form-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #cbd5e0;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+.eventos-form-input,
+.eventos-form-textarea {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(74, 85, 104, 0.3);
+  border: 2px solid #4a5568;
+  border-radius: 12px;
+  color: white;
+  font-size: 15px;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.eventos-form-input:hover,
+.eventos-form-textarea:hover {
+  border-color: #718096;
+}
+
+.eventos-form-input:focus,
+.eventos-form-textarea:focus {
+  outline: none;
+  border-color: #ff6600;
+  background: rgba(74, 85, 104, 0.5);
+  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.1);
+}
+
+.eventos-form-input.error,
+.eventos-form-textarea.error {
+  border-color: #e53e3e;
+}
+
+.eventos-form-input::placeholder,
+.eventos-form-textarea::placeholder {
+  color: #718096;
+}
+
+.eventos-form-textarea {
+  resize: none;
+}
+
+.eventos-form-error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #fc8181;
+  font-size: 0.85rem;
+  margin-top: 8px;
+}
+
+.eventos-modal-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 35px;
+}
+
+.eventos-modal-btn {
+  flex: 1;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.eventos-modal-btn-cancel {
+  background: #4a5568;
+  color: white;
+  border: 2px solid #4a5568;
+}
+
+.eventos-modal-btn-cancel:hover {
+  background: #2d3748;
+}
+
+.eventos-modal-btn-submit {
+  background: linear-gradient(to right, #ff6600, #dc143c);
+  color: white;
+  box-shadow: 0 8px 20px rgba(255, 102, 0, 0.4);
+}
+
+.eventos-modal-btn-submit:hover {
+  transform: scale(1.02);
+  box-shadow: 0 10px 25px rgba(255, 102, 0, 0.6);
+}
+
+.eventos-modal-btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.eventos-btn-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.eventos-btn-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive para eventos */
+@media (max-width: 768px) {
+  .eventos-title {
+    font-size: 2.5rem;
+  }
+  
+  .eventos-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .eventos-modal {
+    margin: 10px;
+  }
+  
+  .eventos-modal-body {
+    padding: 25px 20px;
+  }
+}
+
 /* Botones */
 .btn {
   padding: 12px 24px;

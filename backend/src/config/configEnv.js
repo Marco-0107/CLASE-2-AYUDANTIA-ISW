@@ -17,3 +17,5 @@ export const DB_PORT = 5432;
 export const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 export const JWT_SECRET = process.env.ACCESS_TOKEN_SECRET;
 export const cookieKey = process.env.COOKIE_KEY;
+export const EMAIL_USER = process.env.EMAIL_USER;
+export const EMAIL_PASS = process.env.EMAIL_PASS;
