@@ -11,7 +11,7 @@ import fs from "fs";
 import { fileURLToPath } from 'url';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { cookieKey, HOST, PORT } from "./config/configEnv.js";
+import { cookieKey, HOST, PORT, EMAIL_USER, EMAIL_PASS } from "./config/configEnv.js";
 import { connectDB } from "./config/configDb.js";
 import { createUsers } from "./config/initialSetup.js";
 import { passportJwtSetup } from "./auth/passport.auth.js";
@@ -19,6 +19,15 @@ import { saveMensajeService } from "./services/chat.service.js";
 
 async function setupServer() {
   try {
+    // Validar variables de entorno al iniciar
+    console.log('[Startup] Validando variables de entorno...');
+    console.log('[Startup] EMAIL_USER:', EMAIL_USER ? '✓ Configurado' : '✗ NO configurado');
+    console.log('[Startup] EMAIL_PASS:', EMAIL_PASS ? '✓ Configurado' : '✗ NO configurado');
+    
+    if (!EMAIL_USER || !EMAIL_PASS) {
+      console.warn('[Startup] ADVERTENCIA: Credenciales de email no configuradas. El envío de correos no funcionará.');
+    }
+
     const app = express();
     const httpServer = createServer(app);
     
