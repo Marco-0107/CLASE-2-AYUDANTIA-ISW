@@ -130,7 +130,6 @@ export default function ChatPiloto() {
       tipo_usuario: 'piloto',
       id_usuario: user.id,
       id_piloto: user.id_piloto,
-      idAdmin: 1, // Por defecto admin con id 1
     };
 
     console.log('Enviando mensaje vía Socket.IO:', mensajeData);
@@ -145,7 +144,6 @@ export default function ChatPiloto() {
 
     socket.emit('typing', {
       tipo_usuario: 'piloto',
-      idAdmin: 1,
     });
 
     // Clear previous timeout
@@ -316,7 +314,7 @@ export default function ChatPiloto() {
               type="text"
               value={nuevoMensaje}
               onChange={(e) => setNuevoMensaje(e.target.value)}
-              onKeyPress={handleTyping}
+              onKeyDown={handleTyping}
               placeholder="Escribe un mensaje..."
               style={{
                 flex: 1,

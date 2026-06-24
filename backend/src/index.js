@@ -115,9 +115,14 @@ async function setupServer() {
       // Usuario se une a una sala (admin o piloto)
       socket.on("join-room", (data) => {
         const { userId, userType, pilotoId } = data;
-        const room = userType === "admin" ? `admin-${userId}` : `piloto-${pilotoId}`;
-        socket.join(room);
-        console.log(`[Socket.IO] Usuario ${userId} (${userType}) se unio a la sala: ${room}`);
+        if (userType === "admin") {
+          socket.join(`admin-${userId}`);
+          socket.join("admins"); // sala compartida para todos los admins
+          console.log(`[Socket.IO] Admin ${userId} se unio a admin-${userId} y admins`);
+        } else {
+          socket.join(`piloto-${pilotoId}`);
+          console.log(`[Socket.IO] Piloto ${pilotoId} se unio a piloto-${pilotoId}`);
+        }
       });
 
       // Enviar mensaje
@@ -148,16 +153,15 @@ async function setupServer() {
             // Enviar al piloto
             io.to(`piloto-${id_piloto}`).emit("receive-message", mensaje);
             console.log(`[Chat] Mensaje enviado a sala piloto-${id_piloto}`);
-            
+
             // Enviar confirmación al admin (para que vea su propio mensaje)
             socket.emit("receive-message", mensaje);
             console.log(`[Chat] Confirmacion enviada al admin`);
           } else {
-            // Enviar al admin (cuando el piloto responda)
-            const adminId = data.idAdmin || 1; // Por defecto admin con id 1
-            io.to(`admin-${adminId}`).emit("receive-message", mensaje);
-            console.log(`[Chat] Mensaje enviado a sala admin-${adminId}`);
-            
+            // Enviar a todos los admins conectados
+            io.to("admins").emit("receive-message", mensaje);
+            console.log(`[Chat] Mensaje enviado a sala admins`);
+
             // Enviar confirmación al piloto
             socket.emit("receive-message", mensaje);
             console.log(`[Chat] Confirmacion enviada al piloto`);
@@ -170,11 +174,11 @@ async function setupServer() {
 
       // Usuario escribe (typing indicator)
       socket.on("typing", (data) => {
-        const { tipo_usuario, id_piloto, idAdmin } = data;
+        const { tipo_usuario, id_piloto } = data;
         if (tipo_usuario === "admin") {
           io.to(`piloto-${id_piloto}`).emit("user-typing", { tipo_usuario: "admin" });
         } else {
-          io.to(`admin-${idAdmin}`).emit("user-typing", { tipo_usuario: "piloto" });
+          io.to("admins").emit("user-typing", { tipo_usuario: "piloto" });
         }
       });
 

@@ -1,6 +1,7 @@
 "use strict";
 import {
   getMensajesService,
+  getMensajesPilotoService,
   getConversacionesService,
   marcarMensajesLeidosService,
 } from "../services/chat.service.js";
@@ -16,12 +17,19 @@ import {
 export async function getMensajes(req, res) {
   try {
     const { idPiloto } = req.query;
-    const idUsuarioAdmin = req.user.id; // Del JWT
 
     if (!idPiloto) {
       return handleErrorClient(res, 400, "ID del piloto es requerido");
     }
 
+    // Pilotos ven su propia conversación sin necesitar el id del admin
+    if (req.user.rol === "piloto") {
+      const [mensajes, error] = await getMensajesPilotoService(idPiloto);
+      if (error) return handleErrorClient(res, 404, "Error al obtener mensajes", error);
+      return handleSuccess(res, 200, "Mensajes obtenidos", mensajes);
+    }
+
+    const idUsuarioAdmin = req.user.id;
     const [mensajes, error] = await getMensajesService(idUsuarioAdmin, idPiloto);
 
     if (error) {

@@ -13,8 +13,8 @@ const router = Router();
 router.use(authenticateJwt);
 
 router
-  .get("/mensajes", authorizeRoles("admin", "organizador"), getMensajes)
-  .get("/conversaciones", authorizeRoles("admin", "organizador"), getConversaciones)
+  .get("/mensajes", authorizeRoles("admin", "organizador", "piloto"), getMensajes)
+  .get("/conversaciones", authorizeRoles("admin", "organizador", "piloto"), getConversaciones)
   .post("/marcar-leidos", authorizeRoles("admin", "organizador", "piloto"), marcarMensajesLeidos);
 
 export default router;

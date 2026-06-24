@@ -28,7 +28,7 @@ export async function saveMensajeService(mensajeData) {
 }
 
 /**
- * Obtener historial de mensajes entre admin y un piloto
+ * Obtener historial de mensajes entre admin y un piloto (vista admin)
  */
 export async function getMensajesService(idUsuarioAdmin, idPiloto) {
   try {
@@ -47,6 +47,30 @@ export async function getMensajesService(idUsuarioAdmin, idPiloto) {
     return [mensajes, null];
   } catch (error) {
     console.error("Error en getMensajesService:", error);
+    return [null, "Error al obtener mensajes"];
+  }
+}
+
+/**
+ * Obtener historial de mensajes de un piloto (vista piloto)
+ */
+export async function getMensajesPilotoService(idPiloto) {
+  try {
+    const mensajeRepository = AppDataSource.getRepository(MensajeSchema);
+
+    const mensajes = await mensajeRepository
+      .createQueryBuilder("mensaje")
+      .where(
+        "(mensaje.id_piloto = :idPiloto AND mensaje.tipo_usuario = 'admin') OR " +
+        "(mensaje.id_usuario = :idPiloto AND mensaje.tipo_usuario = 'piloto')",
+        { idPiloto }
+      )
+      .orderBy("mensaje.fecha_envio", "ASC")
+      .getMany();
+
+    return [mensajes, null];
+  } catch (error) {
+    console.error("Error en getMensajesPilotoService:", error);
     return [null, "Error al obtener mensajes"];
   }
 }
